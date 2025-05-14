@@ -1,19 +1,14 @@
-import 'package:coffee_shope/coffee_list.dart';
+import 'package:coffee_shope/views/coffee_list.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-class HomePage extends StatefulWidget {
+import '../controller/home_provider.dart';
 
+class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 0;
-  @override
   Widget build(BuildContext context) {
-
     return DefaultTabController(
       length: 3,
       child: Scaffold(
@@ -43,6 +38,7 @@ class _HomePageState extends State<HomePage> {
                     fontSize: 30,
                     fontWeight: FontWeight.bold),
               ),
+              SizedBox(height: 10),
               TextField(
                 decoration: InputDecoration(
                     hintText: "Find your coffee",
@@ -61,6 +57,7 @@ class _HomePageState extends State<HomePage> {
                         borderSide: BorderSide.none),
                     focusColor: Color(0xff323638)),
               ),
+              SizedBox(height: 10),
               TabBar(
                   indicatorColor: Colors.orange,
                   labelColor: Colors.orange,
@@ -79,36 +76,45 @@ class _HomePageState extends State<HomePage> {
                     )
                   ]),
               Expanded(
-                  child: TabBarView(
-                children: [
-                  CoffeeList(),
-                  CoffeeList(),
-                  CoffeeList(),
-                ],
-              )
+                child: TabBarView(
+                  children: [
+                    CoffeeList(category: "Hot Coffee"),
+                    CoffeeList(category: "Cold Coffee"),
+                    CoffeeList(category: "Cappuccino"),
+                  ],
+                ),
               ),
             ],
           ),
         ),
-        bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: Color(0xff212325),
-          selectedItemColor: const Color(0xffbf6329), // Use 'const' for efficiency
-          unselectedItemColor: Colors.white,
-          currentIndex: _selectedIndex,
-          type: BottomNavigationBarType.fixed, // Ensures color applies correctly
-          items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.home,size: 30,), label: ""),
-            BottomNavigationBarItem(icon: Icon(Icons.favorite,size: 30), label: ""),
-            BottomNavigationBarItem(icon: Icon(Icons.notifications,size: 30), label: ""),
-            BottomNavigationBarItem(icon: Icon(Icons.person,size: 30), label: ""),
-          ],
-          onTap: (index) {
-            setState(() {
-              _selectedIndex = index;
-            });
-          },
+        bottomNavigationBar: Consumer<HomeProvider>(
+          builder: (_, value, __) => BottomNavigationBar(
+            backgroundColor: Color(0xff212325),
+            selectedItemColor: const Color(0xffbf6329),
+            // Use 'const' for efficiency
+            unselectedItemColor: Colors.white,
+            currentIndex: value.selectedIndex,
+            type: BottomNavigationBarType.fixed,
+            // Ensures color applies correctly
+            items: const [
+              BottomNavigationBarItem(
+                  icon: Icon(
+                    Icons.home,
+                    size: 30,
+                  ),
+                  label: ""),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.favorite, size: 30), label: ""),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.notifications, size: 30), label: ""),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.person, size: 30), label: ""),
+            ],
+            onTap: (index) {
+              value.changeIndex(index);
+            },
+          ),
         ),
-
       ),
     );
   }
