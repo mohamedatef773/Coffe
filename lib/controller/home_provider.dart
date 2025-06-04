@@ -12,22 +12,36 @@ class HomeProvider extends ChangeNotifier {
   List<Coffee> cart = [];
 
   void addToCart(Coffee coffee) {
-    // indexOf: return index value of coffee if it exist or return -1 if it doesn't exist
-    int index = cart.indexOf(coffee);
+    // Find if this coffee already exists in cart
+    int index = cart.indexWhere((item) => item.title == coffee.title);
+
     if (index != -1) {
+      // If coffee exists in cart, increase its quantity
       cart[index].quantity++;
     } else {
-      cart.add(coffee);
+      // If coffee doesn't exist in cart, create a copy with quantity 1
+      Coffee newCoffee = Coffee(
+        title: coffee.title,
+        description: coffee.description,
+        price: coffee.price,
+        image: coffee.image,
+        category: coffee.category,
+        quantity: 1,
+        subTitle: coffee.subTitle ?? '', // Start with quantity 1
+      );
+      cart.add(newCoffee);
     }
     notifyListeners();
   }
 
   void removeFromCart(Coffee coffee) {
-    int index = cart.indexOf(coffee);
-    if (cart[index].quantity == 1) {
-      cart.removeAt(index);
-    } else {
-      cart[index].quantity--;
+    int index = cart.indexWhere((item) => item.title == coffee.title);
+    if (index != -1) {
+      if (cart[index].quantity == 1) {
+        cart.removeAt(index);
+      } else {
+        cart[index].quantity--;
+      }
     }
     notifyListeners();
   }
@@ -37,9 +51,11 @@ class HomeProvider extends ChangeNotifier {
 
     for (var itemMap in data) {
       Coffee coffee = Coffee.fromMap(itemMap);
+      // Ensure initial quantity is 0 for display items
+      coffee.quantity = 0;
       coffees.add(coffee);
     }
-    notifyListeners(); // notifyListeners() == update() (in GetX)
+    notifyListeners();
   }
 
   int selectedIndex = 0;
@@ -60,4 +76,21 @@ class HomeProvider extends ChangeNotifier {
 
     return filteredCoffees;
   }
+
+  // Helper method to get cart quantity for a specific coffee
+  int getCartQuantity(Coffee coffee) {
+    int index = cart.indexWhere((item) => item.title == coffee.title);
+    return index != -1 ? cart[index].quantity : 0;
+  }
+
+  // Method to calculate total price of all items in cart
+  double getTotalPrice() {
+    double total = 0.0;
+    for (var coffee in cart) {
+      total += coffee.price * coffee.quantity;
+    }
+    return total;
+  }
+
+
 }
