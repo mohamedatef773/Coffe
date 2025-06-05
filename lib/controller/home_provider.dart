@@ -11,23 +11,22 @@ class HomeProvider extends ChangeNotifier {
   List<Coffee> coffees = [];
   List<Coffee> cart = [];
 
-  void addToCart(Coffee coffee) {
+  void addToCart(Coffee coffee, int quantity) {
     // Find if this coffee already exists in cart
-    int index = cart.indexWhere((item) => item.title == coffee.title);
+    int index = cart.indexWhere((item) => item.id == coffee.id);
 
     if (index != -1) {
-      // If coffee exists in cart, increase its quantity
-      cart[index].quantity++;
+      cart[index].quantity += quantity;
     } else {
-      // If coffee doesn't exist in cart, create a copy with quantity 1
       Coffee newCoffee = Coffee(
+        id: coffee.id,
         title: coffee.title,
         description: coffee.description,
         price: coffee.price,
         image: coffee.image,
         category: coffee.category,
-        quantity: 1,
-        subTitle: coffee.subTitle ?? '', // Start with quantity 1
+        quantity: quantity,
+        subTitle: coffee.subTitle ?? '',
       );
       cart.add(newCoffee);
     }
@@ -35,7 +34,7 @@ class HomeProvider extends ChangeNotifier {
   }
 
   void removeFromCart(Coffee coffee) {
-    int index = cart.indexWhere((item) => item.title == coffee.title);
+    int index = cart.indexWhere((item) => item.id == coffee.id);
     if (index != -1) {
       if (cart[index].quantity == 1) {
         cart.removeAt(index);
@@ -51,8 +50,6 @@ class HomeProvider extends ChangeNotifier {
 
     for (var itemMap in data) {
       Coffee coffee = Coffee.fromMap(itemMap);
-      // Ensure initial quantity is 0 for display items
-      coffee.quantity = 0;
       coffees.add(coffee);
     }
     notifyListeners();
@@ -77,12 +74,6 @@ class HomeProvider extends ChangeNotifier {
     return filteredCoffees;
   }
 
-  // Helper method to get cart quantity for a specific coffee
-  int getCartQuantity(Coffee coffee) {
-    int index = cart.indexWhere((item) => item.title == coffee.title);
-    return index != -1 ? cart[index].quantity : 0;
-  }
-
   // Method to calculate total price of all items in cart
   double getTotalPrice() {
     double total = 0.0;
@@ -92,5 +83,20 @@ class HomeProvider extends ChangeNotifier {
     return total;
   }
 
+  void incrementQuantity(Coffee coffee) {
+    coffee.quantity++;
+    notifyListeners();
+  }
 
+  void decrementQuantity(Coffee coffee) {
+    if (coffee.quantity > 1) {
+      coffee.quantity--;
+      notifyListeners();
+    }
+  }
+
+  void resetQuantity(Coffee coffee) {
+    coffee.quantity = 1;
+    notifyListeners();
+  }
 }

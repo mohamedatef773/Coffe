@@ -15,8 +15,7 @@ class CoffeeList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<Coffee> coffees = Provider.of<HomeProvider>(context, listen: false)
-        .filterCoffees(category);
+    List<Coffee> coffees = Provider.of<HomeProvider>(context, listen: false).filterCoffees(category);
     // Consumer == GetBuilder in GetX
     return GridView.builder(
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(

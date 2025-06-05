@@ -1,5 +1,4 @@
 class Coffee {
-  int id;
   String title;
   String subTitle;
   String description;
@@ -9,7 +8,6 @@ class Coffee {
   String category;
 
   Coffee({
-    required this.id,
     required this.title,
     required this.subTitle,
     required this.description,
@@ -21,7 +19,6 @@ class Coffee {
 
   factory Coffee.fromMap(Map<String, dynamic> map) {
     return Coffee(
-      id: map["id"],
       title: map["title"],
       subTitle: map["subTitle"],
       description: map["description"],

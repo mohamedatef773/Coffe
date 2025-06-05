@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../controller/home_provider.dart';
-import 'onboarding.dart';
+import 'controller/home_provider.dart';
+import 'views/onboarding.dart';
 
 void main() {
   runApp(
